@@ -1,0 +1,7 @@
+/Users/eriksantos/Downloads/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/Debug/net8.0/Ambev.DeveloperEvaluation.WebApi.csproj.AssemblyReference.cache
+/Users/eriksantos/Downloads/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/Debug/net8.0/Ambev.DeveloperEvaluation.WebApi.GeneratedMSBuildEditorConfig.editorconfig
+/Users/eriksantos/Downloads/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/Debug/net8.0/Ambev.DeveloperEvaluation.WebApi.AssemblyInfoInputs.cache
+/Users/eriksantos/Downloads/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/Debug/net8.0/Ambev.DeveloperEvaluation.WebApi.AssemblyInfo.cs
+/Users/eriksantos/Downloads/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/Debug/net8.0/Ambev.DeveloperEvaluation.WebApi.csproj.CoreCompileInputs.cache
+/Users/eriksantos/Downloads/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/Debug/net8.0/Ambev.DeveloperEvaluation.WebApi.MvcApplicationPartsAssemblyInfo.cs
+/Users/eriksantos/Downloads/abi-gth-omnia-developer-evaluation/template/backend/src/Ambev.DeveloperEvaluation.WebApi/obj/Debug/net8.0/Ambev.DeveloperEvaluation.WebApi.MvcApplicationPartsAssemblyInfo.cache
