@@ -1,14 +1,11 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Ambev.DeveloperEvaluation.Application.Commands;
-using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Handlers
+namespace Ambev.DeveloperEvaluation.Application.Sales.CreateSale
 {
-    public class CreateSaleCommandHandler : IRequestHandler<CreateSaleCommand, Guid>
+    public class CreateSaleCommandHandler : IRequestHandler<CreateSaleCommand, CreateSaleResult>
     {
         private readonly ISaleRepository _saleRepository;
 
@@ -17,7 +14,7 @@ namespace Ambev.DeveloperEvaluation.Application.Handlers
             _saleRepository = saleRepository;
         }
 
-        public async Task<Guid> Handle(CreateSaleCommand request, CancellationToken cancellationToken)
+        public async Task<CreateSaleResult> Handle(CreateSaleCommand request, CancellationToken cancellationToken)
         {
             var sale = new Sale(
                 request.SaleNumber,
@@ -39,7 +36,15 @@ namespace Ambev.DeveloperEvaluation.Application.Handlers
             }
 
             await _saleRepository.AddAsync(sale);
-            return sale.Id;
+
+            if (sale.HasEvent())
+            {
+                foreach (var @event in sale._domainEvents)
+                    await _bus.Publish(@event)
+            }
+
+
+            return new CreateSaleResult(sale.Id);
         }
     }
-} 
+}

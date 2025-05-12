@@ -1,6 +1,4 @@
-using System;
-using Ambev.DeveloperEvaluation.Application.Requests;
-using Ambev.DeveloperEvaluation.Application.Validators;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
 using FluentValidation.TestHelper;
 using Xunit;
 
@@ -223,4 +221,4 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             result.ShouldHaveValidationErrorFor("Items[0].UnitPrice");
         }
     }
-} 
+}

@@ -1,6 +1,4 @@
-using System;
-
-namespace Ambev.DeveloperEvaluation.Domain.Events
+namespace Ambev.DeveloperEvaluation.Domain.Events.Sale
 {
     public class ItemCancelledEvent : DomainEvent
     {
@@ -13,4 +11,4 @@ namespace Ambev.DeveloperEvaluation.Domain.Events
             ItemId = itemId;
         }
     }
-} 
+}

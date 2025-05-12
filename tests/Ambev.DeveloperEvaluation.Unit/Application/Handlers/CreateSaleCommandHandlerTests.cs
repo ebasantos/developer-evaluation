@@ -1,7 +1,4 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Ambev.DeveloperEvaluation.Application.Commands;
+using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Moq;
@@ -56,4 +53,4 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
             Assert.NotEqual(Guid.Empty, result);
         }
     }
-} 
+}

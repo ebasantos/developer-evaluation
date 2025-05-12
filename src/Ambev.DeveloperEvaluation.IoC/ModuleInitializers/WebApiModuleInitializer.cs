@@ -1,11 +1,7 @@
-﻿using Ambev.DeveloperEvaluation.Common.Security;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Ambev.DeveloperEvaluation.WebApi.Consumers.Sale;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using MassTransit;
-using Ambev.DeveloperEvaluation.WebApi.Consumers;
 
 namespace Ambev.DeveloperEvaluation.IoC.ModuleInitializers
 {
@@ -18,10 +14,10 @@ namespace Ambev.DeveloperEvaluation.IoC.ModuleInitializers
 
             builder.Services.AddMassTransit(x =>
             {
-                x.AddConsumer<SaleCreatedConsumer>();
+                x.AddConsumer<CreateSaleConsumer>();
                 x.AddConsumer<SaleModifiedConsumer>();
-                x.AddConsumer<SaleCancelledConsumer>();
-                x.AddConsumer<ItemCancelledConsumer>();
+                x.AddConsumer<CancelSaleItemConsumer>();
+                x.AddConsumer<CancelSaleConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {

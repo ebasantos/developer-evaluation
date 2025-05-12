@@ -1,9 +1,8 @@
-using System.Threading.Tasks;
-using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Sale;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Consumers
+namespace Ambev.DeveloperEvaluation.Application
 {
     public class SaleModifiedConsumer : IConsumer<SaleModifiedEvent>
     {
@@ -16,8 +15,8 @@ namespace Ambev.DeveloperEvaluation.WebApi.Consumers
 
         public Task Consume(ConsumeContext<SaleModifiedEvent> context)
         {
-            _logger.LogInformation("Venda modificada: {SaleId}", context.Message.SaleId);
+            _logger.LogInformation("sale updated: {SaleId}", context.Message.SaleId);
             return Task.CompletedTask;
         }
     }
-} 
+}

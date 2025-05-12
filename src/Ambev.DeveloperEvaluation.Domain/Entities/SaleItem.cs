@@ -1,5 +1,5 @@
-using System;
 using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Specifications;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities
 {
@@ -15,6 +15,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
         protected SaleItem() { }
 
+
+        private void CancelItem() => IsCancelled = true;
+
+
         public SaleItem(Guid productId, string productName, int quantity, decimal unitPrice, decimal discount)
         {
             ProductId = productId;
@@ -27,10 +31,10 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
 
         public void Cancel()
         {
-            if (IsCancelled)
-                throw new DomainException("Item já está cancelado.");
+            if (new CanCancelSaleItemSpecification().IsSatisfiedBy(this))
+                throw new DomainException("Item already canceled.");
 
-            IsCancelled = true;
+            CancelItem();
         }
     }
-} 
+}

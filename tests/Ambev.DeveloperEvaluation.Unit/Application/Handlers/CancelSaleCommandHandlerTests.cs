@@ -1,7 +1,4 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Ambev.DeveloperEvaluation.Application.Commands;
+using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Moq;
@@ -67,4 +64,4 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
             await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
         }
     }
-} 
+}

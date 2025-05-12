@@ -1,6 +1,4 @@
-using System;
-using Ambev.DeveloperEvaluation.Application.Requests;
-using Ambev.DeveloperEvaluation.Application.Validators;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSale;
 using FluentValidation.TestHelper;
 using Xunit;
 
@@ -63,4 +61,4 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             result.ShouldHaveValidationErrorFor(x => x.Reason);
         }
     }
-} 
+}

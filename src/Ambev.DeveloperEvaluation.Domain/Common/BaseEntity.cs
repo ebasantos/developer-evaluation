@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Common.Validation;
+using Ambev.DeveloperEvaluation.Domain.Events;
 
 namespace Ambev.DeveloperEvaluation.Domain.Common;
 
@@ -10,6 +11,10 @@ public class BaseEntity : IComparable<BaseEntity>
     {
         return Validator.ValidateAsync(this);
     }
+
+    public readonly List<DomainEvent> _domainEvents = new();
+    public bool HasEvent => _domainEvents.Count() > 0;
+
 
     public int CompareTo(BaseEntity? other)
     {
