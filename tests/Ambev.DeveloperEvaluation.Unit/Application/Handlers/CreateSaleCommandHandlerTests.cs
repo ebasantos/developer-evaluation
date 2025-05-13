@@ -1,6 +1,8 @@
+using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using MassTransit;
 using Moq;
 using Xunit;
 
@@ -9,12 +11,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
     public class CreateSaleCommandHandlerTests
     {
         private readonly Mock<ISaleRepository> _saleRepositoryMock;
+        private readonly Mock<IBus> _busMock;
         private readonly CreateSaleCommandHandler _handler;
 
         public CreateSaleCommandHandlerTests()
         {
             _saleRepositoryMock = new Mock<ISaleRepository>();
-            _handler = new CreateSaleCommandHandler(_saleRepositoryMock.Object);
+            _busMock = new Mock<IBus>();
+            _handler = new CreateSaleCommandHandler(_saleRepositoryMock.Object, _busMock.Object);
         }
 
         [Fact]
@@ -43,14 +47,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
 
             _saleRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Sale>()))
-                .Returns(Task.CompletedTask);
+                .Returns(Task.FromResult<Sale>(null));
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             _saleRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Sale>()), Times.Once);
-            Assert.NotEqual(Guid.Empty, result);
+            Assert.NotEqual(Guid.Empty, result.Id);
         }
     }
 }

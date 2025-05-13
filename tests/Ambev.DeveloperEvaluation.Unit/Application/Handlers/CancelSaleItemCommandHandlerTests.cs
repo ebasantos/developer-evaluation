@@ -1,6 +1,8 @@
+using Ambev.DeveloperEvaluation.Application.Sale.CancelSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using AutoMapper;
 using Moq;
 using Xunit;
 
@@ -9,12 +11,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
     public class CancelSaleItemCommandHandlerTests
     {
         private readonly Mock<ISaleRepository> _saleRepositoryMock;
+        private readonly Mock<IMapper> _mapperMock;
         private readonly CancelSaleItemCommandHandler _handler;
 
         public CancelSaleItemCommandHandlerTests()
         {
             _saleRepositoryMock = new Mock<ISaleRepository>();
-            _handler = new CancelSaleItemCommandHandler(_saleRepositoryMock.Object);
+            _mapperMock = new Mock<IMapper>();
+            _handler = new CancelSaleItemCommandHandler(_saleRepositoryMock.Object, _mapperMock.Object);
         }
 
         [Fact]
@@ -44,14 +48,20 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
 
             _saleRepositoryMock
                 .Setup(x => x.UpdateAsync(It.IsAny<Sale>()))
-                .Returns(Task.CompletedTask);
+                .Returns(Task.FromResult<Sale>(null));
+
+            _mapperMock
+                .Setup(x => x.Map<CancelSaleItemResult>(It.IsAny<CancelSaleItemCommand>()))
+                .Returns(new CancelSaleItemResult { SaleId = saleId, ItemId = itemId });
 
             // Act
-            await _handler.Handle(command, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             _saleRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Sale>()), Times.Once);
             Assert.True(item.IsCancelled);
+            Assert.Equal(saleId, result.SaleId);
+            Assert.Equal(itemId, result.ItemId);
         }
 
         [Fact]
@@ -67,7 +77,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
                 .ReturnsAsync((Sale)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            Assert.Equal("sale not found", ex.Message);
         }
 
         [Fact]
@@ -93,7 +104,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
                 .ReturnsAsync(existingSale);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            Assert.Equal("it is not possible to cancel items from a sale that has already been canceled.", ex.Message);
         }
     }
 }

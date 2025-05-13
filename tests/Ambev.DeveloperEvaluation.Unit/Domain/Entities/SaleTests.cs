@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Events;
+using Ambev.DeveloperEvaluation.Domain.Events.Sale;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
@@ -66,7 +67,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
             var unitPrice = 100m;
 
             // Act & Assert
-            Assert.Throws<DomainException>(() => sale.AddItem(_productId, productName, quantity, unitPrice));
+            var ex = Assert.Throws<DomainException>(() => sale.AddItem(_productId, productName, quantity, unitPrice));
+            Assert.Equal("you cannot sell more than 20 same items.", ex.Message);
         }
 
         [Fact]
@@ -84,10 +86,29 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
             // Assert
             var item = sale.Items.Single();
             Assert.Equal(0.20m, item.Discount);
+            Assert.Equal(1200m, item.TotalAmount); // 15 * 100 * 0.8 (20% discount)
         }
 
         [Fact]
-        public void AddItem_WithQuantityBelow4_ShouldNotApplyDiscount()
+        public void AddItem_WithQuantityBetween5And9_ShouldApply10PercentDiscount()
+        {
+            // Arrange
+            var sale = CreateValidSale();
+            var productName = "Product 1";
+            var quantity = 7;
+            var unitPrice = 100m;
+
+            // Act
+            sale.AddItem(_productId, productName, quantity, unitPrice);
+
+            // Assert
+            var item = sale.Items.Single();
+            Assert.Equal(0.10m, item.Discount);
+            Assert.Equal(630m, item.TotalAmount); // 7 * 100 * 0.9 (10% discount)
+        }
+
+        [Fact]
+        public void AddItem_WithQuantityBelow5_ShouldNotApplyDiscount()
         {
             // Arrange
             var sale = CreateValidSale();
@@ -101,6 +122,82 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
             // Assert
             var item = sale.Items.Single();
             Assert.Equal(0m, item.Discount);
+            Assert.Equal(300m, item.TotalAmount); // 3 * 100 (no discount)
+        }
+
+        [Fact]
+        public void AddItem_WithMultipleItems_ShouldCalculateTotalAmountCorrectly()
+        {
+            // Arrange
+            var sale = CreateValidSale();
+            var product1 = Guid.NewGuid();
+            var product2 = Guid.NewGuid();
+
+            // Act
+            sale.AddItem(product1, "Product 1", 15, 100m); // 20% discount
+            sale.AddItem(product2, "Product 2", 7, 200m);  // 10% discount
+
+            // Assert
+            Assert.Equal(2, sale.Items.Count);
+            Assert.Equal(1200m, sale.Items.First().TotalAmount); // 15 * 100 * 0.8
+            Assert.Equal(1260m, sale.Items.Last().TotalAmount);  // 7 * 200 * 0.9
+            Assert.Equal(2460m, sale.TotalAmount); // 1200 + 1260
+        }
+
+        [Fact]
+        public void AddItem_WithZeroQuantity_ShouldThrowException()
+        {
+            // Arrange
+            var sale = CreateValidSale();
+            var productName = "Product 1";
+            var quantity = 0;
+            var unitPrice = 100m;
+
+            // Act & Assert
+            var ex = Assert.Throws<DomainException>(() => sale.AddItem(_productId, productName, quantity, unitPrice));
+            Assert.Equal("quantity must be greater than zero", ex.Message);
+        }
+
+        [Fact]
+        public void AddItem_WithNegativeQuantity_ShouldThrowException()
+        {
+            // Arrange
+            var sale = CreateValidSale();
+            var productName = "Product 1";
+            var quantity = -1;
+            var unitPrice = 100m;
+
+            // Act & Assert
+            var ex = Assert.Throws<DomainException>(() => sale.AddItem(_productId, productName, quantity, unitPrice));
+            Assert.Equal("quantity must be greater than zero", ex.Message);
+        }
+
+        [Fact]
+        public void AddItem_WithZeroUnitPrice_ShouldThrowException()
+        {
+            // Arrange
+            var sale = CreateValidSale();
+            var productName = "Product 1";
+            var quantity = 5;
+            var unitPrice = 0m;
+
+            // Act & Assert
+            var ex = Assert.Throws<DomainException>(() => sale.AddItem(_productId, productName, quantity, unitPrice));
+            Assert.Equal("unit price must be greater than zero", ex.Message);
+        }
+
+        [Fact]
+        public void AddItem_WithNegativeUnitPrice_ShouldThrowException()
+        {
+            // Arrange
+            var sale = CreateValidSale();
+            var productName = "Product 1";
+            var quantity = 5;
+            var unitPrice = -100m;
+
+            // Act & Assert
+            var ex = Assert.Throws<DomainException>(() => sale.AddItem(_productId, productName, quantity, unitPrice));
+            Assert.Equal("unit price must be greater than zero", ex.Message);
         }
 
         [Fact]
@@ -114,7 +211,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
 
             // Assert
             Assert.True(sale.IsCancelled);
-            Assert.Contains(sale.DomainEvents, e => e is SaleCancelledEvent);
+            Assert.Contains(sale.GetDomainEvents(), e => e is SaleCancelledEvent);
         }
 
         [Fact]
@@ -125,7 +222,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
             sale.Cancel();
 
             // Act & Assert
-            Assert.Throws<DomainException>(() => sale.Cancel());
+            var ex = Assert.Throws<DomainException>(() => sale.Cancel());
+            Assert.Equal("sale already canceled", ex.Message);
         }
 
         [Fact]
@@ -142,7 +240,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
             // Assert
             var item = sale.Items.First();
             Assert.True(item.IsCancelled);
-            Assert.Contains(sale.DomainEvents, e => e is ItemCancelledEvent);
+            Assert.Contains(sale.GetDomainEvents(), e => e is ItemCancelledEvent);
         }
 
         [Fact]
@@ -152,7 +250,22 @@ namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities
             var sale = CreateValidSale();
 
             // Act & Assert
-            Assert.Throws<DomainException>(() => sale.CancelItem(Guid.NewGuid()));
+            var ex = Assert.Throws<DomainException>(() => sale.CancelItem(Guid.NewGuid()));
+            Assert.Equal("item not found", ex.Message);
+        }
+
+        [Fact]
+        public void CancelItem_WhenItemAlreadyCancelled_ShouldThrowException()
+        {
+            // Arrange
+            var sale = CreateValidSale();
+            sale.AddItem(_productId, "Product 1", 5, 100m);
+            var itemId = sale.Items.First().Id;
+            sale.CancelItem(itemId);
+
+            // Act & Assert
+            var ex = Assert.Throws<DomainException>(() => sale.CancelItem(itemId));
+            Assert.Equal("item already canceled", ex.Message);
         }
 
         private Sale CreateValidSale()

@@ -14,51 +14,29 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
         }
 
         [Fact]
-        public void Validate_WithValidRequest_ShouldNotHaveErrors()
+        public void Validate_WithValidRequest_ShouldNotHaveValidationErrors()
         {
             // Arrange
-            var request = new CancelSaleRequest
-            {
-                Reason = "Erro no pedido"
-            };
+            var request = new CancelSaleRequest(Guid.NewGuid());
 
             // Act
             var result = _validator.TestValidate(request);
 
             // Assert
-            result.ShouldNotHaveAnyValidationErrors();
+            result.ShouldNotHaveValidationErrorFor(x => x.Id);
         }
 
         [Fact]
-        public void Validate_WithEmptyReason_ShouldHaveError()
+        public void Validate_WithEmptyId_ShouldHaveValidationError()
         {
             // Arrange
-            var request = new CancelSaleRequest
-            {
-                Reason = string.Empty
-            };
+            var request = new CancelSaleRequest(Guid.Empty);
 
             // Act
             var result = _validator.TestValidate(request);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Reason);
-        }
-
-        [Fact]
-        public void Validate_WithNullReason_ShouldHaveError()
-        {
-            // Arrange
-            var request = new CancelSaleRequest
-            {
-                Reason = null
-            };
-
-            // Act
-            var result = _validator.TestValidate(request);
-
-            // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Reason);
+            result.ShouldHaveValidationErrorFor(x => x.Id);
         }
     }
 }

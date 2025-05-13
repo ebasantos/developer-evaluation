@@ -15,7 +15,7 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public string BranchName { get; private set; }
         public decimal TotalAmount { get; private set; }
         public bool IsCancelled { get; private set; }
-        public IReadOnlyCollection<SaleItem> Items => _items.AsReadOnly();
+        public virtual IReadOnlyCollection<SaleItem> Items => _items.AsReadOnly();
 
         private readonly List<SaleItem> _items = new();
 
@@ -39,10 +39,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public void AddItem(Guid productId, string productName, int quantity, decimal unitPrice)
         {
             if (quantity > 20)
-                throw new DomainException("you cannot sell more than 20 same items.");
+                throw new DomainException("you cannot sell more than 20 equal items.");
 
             var discount = CalculateDiscount(quantity);
             var item = new SaleItem(productId, productName, quantity, unitPrice, discount);
+
             _items.Add(item);
 
             RecalculateTotal();

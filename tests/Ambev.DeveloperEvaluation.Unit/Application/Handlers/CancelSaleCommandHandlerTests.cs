@@ -1,6 +1,8 @@
+using Ambev.DeveloperEvaluation.Application.Sale.CancelSale;
 using Ambev.DeveloperEvaluation.Application.Sales.CancelSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using MassTransit;
 using Moq;
 using Xunit;
 
@@ -9,12 +11,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
     public class CancelSaleCommandHandlerTests
     {
         private readonly Mock<ISaleRepository> _saleRepositoryMock;
+        private readonly Mock<IBus> _busMock;
         private readonly CancelSaleCommandHandler _handler;
 
         public CancelSaleCommandHandlerTests()
         {
             _saleRepositoryMock = new Mock<ISaleRepository>();
-            _handler = new CancelSaleCommandHandler(_saleRepositoryMock.Object);
+            _busMock = new Mock<IBus>();
+            _handler = new CancelSaleCommandHandler(_saleRepositoryMock.Object, _busMock.Object);
         }
 
         [Fact]
@@ -39,7 +43,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
 
             _saleRepositoryMock
                 .Setup(x => x.UpdateAsync(It.IsAny<Sale>()))
-                .Returns(Task.CompletedTask);
+                .Returns(Task.FromResult<Sale>(null));
 
             // Act
             await _handler.Handle(command, CancellationToken.None);
@@ -61,7 +65,34 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
                 .ReturnsAsync((Sale)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            Assert.Equal("sale not found", ex.Message);
+        }
+
+        [Fact]
+        public async Task Handle_WhenSaleIsAlreadyCancelled_ShouldThrowException()
+        {
+            // Arrange
+            var saleId = Guid.NewGuid();
+            var command = new CancelSaleCommand { Id = saleId };
+
+            var existingSale = new Sale(
+                "SALE-001",
+                DateTime.UtcNow,
+                Guid.NewGuid(),
+                "John Doe",
+                Guid.NewGuid(),
+                "Branch 1"
+            );
+            existingSale.Cancel();
+
+            _saleRepositoryMock
+                .Setup(x => x.GetByIdAsync(saleId))
+                .ReturnsAsync(existingSale);
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<DomainException>(() => _handler.Handle(command, CancellationToken.None));
+            Assert.Equal("sale already canceled", ex.Message);
         }
     }
 }

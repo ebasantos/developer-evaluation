@@ -9,7 +9,6 @@ using Ambev.DeveloperEvaluation.WebApi.Middleware;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Ambev.DeveloperEvaluation.WebApi.Consumers;
 using MassTransit;
 
 namespace Ambev.DeveloperEvaluation.WebApi;

@@ -1,7 +1,8 @@
-﻿using Ambev.DeveloperEvaluation.WebApi.Consumers.Sale;
-using MassTransit;
+﻿using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Ambev.DeveloperEvaluation.Application;
+using Ambev.DeveloperEvaluation.Domain.Events.Sale;
 
 namespace Ambev.DeveloperEvaluation.IoC.ModuleInitializers
 {
@@ -16,12 +17,14 @@ namespace Ambev.DeveloperEvaluation.IoC.ModuleInitializers
             {
                 x.AddConsumer<CreateSaleConsumer>();
                 x.AddConsumer<SaleModifiedConsumer>();
-                x.AddConsumer<CancelSaleItemConsumer>();
                 x.AddConsumer<CancelSaleConsumer>();
+                x.AddConsumer<CancelSaleItemConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host("localhost", "/", h => { });
+
+                    cfg.ConfigureEndpoints(context);
                 });
             });
         }

@@ -14,51 +14,55 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
         }
 
         [Fact]
-        public void Validate_WithValidRequest_ShouldNotHaveErrors()
+        public void Validate_WithValidRequest_ShouldNotHaveValidationErrors()
         {
             // Arrange
             var request = new CancelSaleItemRequest
             {
-                Reason = "Produto indisponível"
+                SaleId = Guid.NewGuid(),
+                ItemId = Guid.NewGuid()
             };
 
             // Act
             var result = _validator.TestValidate(request);
 
             // Assert
-            result.ShouldNotHaveAnyValidationErrors();
+            result.ShouldNotHaveValidationErrorFor(x => x.SaleId);
+            result.ShouldNotHaveValidationErrorFor(x => x.ItemId);
         }
 
         [Fact]
-        public void Validate_WithEmptyReason_ShouldHaveError()
+        public void Validate_WithEmptySaleId_ShouldHaveValidationError()
         {
             // Arrange
             var request = new CancelSaleItemRequest
             {
-                Reason = string.Empty
+                SaleId = Guid.Empty,
+                ItemId = Guid.NewGuid()
             };
 
             // Act
             var result = _validator.TestValidate(request);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Reason);
+            result.ShouldHaveValidationErrorFor(x => x.SaleId);
         }
 
         [Fact]
-        public void Validate_WithNullReason_ShouldHaveError()
+        public void Validate_WithEmptyItemId_ShouldHaveValidationError()
         {
             // Arrange
             var request = new CancelSaleItemRequest
             {
-                Reason = null
+                SaleId = Guid.NewGuid(),
+                ItemId = Guid.Empty
             };
 
             // Act
             var result = _validator.TestValidate(request);
 
             // Assert
-            result.ShouldHaveValidationErrorFor(x => x.Reason);
+            result.ShouldHaveValidationErrorFor(x => x.ItemId);
         }
     }
 }

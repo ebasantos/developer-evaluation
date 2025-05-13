@@ -10,12 +10,13 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale
         private readonly ISaleRepository _saleRepository;
         private readonly IBus _bus;
 
-        public CancelSaleCommandHandler(ISaleRepository saleRepository)
+        public CancelSaleCommandHandler(ISaleRepository saleRepository, IBus bus)
         {
             _saleRepository = saleRepository;
+            _bus = bus;
         }
 
-        public async Task<> Handle(CancelSaleCommand request, CancellationToken cancellationToken)
+        public async Task<CancelSaleResult> Handle(CancelSaleCommand request, CancellationToken cancellationToken)
         {
             var sale = await _saleRepository.GetByIdAsync(request.Id) ?? throw new Exception("sale not found");
 
@@ -23,10 +24,10 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSale
 
             await _saleRepository.UpdateAsync(sale);
 
-            if (sale.HasEvent())
+            if (sale.HasEvent)
             {
                 foreach (var @event in sale._domainEvents)
-                    await _bus.Publish(@event)
+                    await _bus.Publish(@event);
             }
 
             return new CancelSaleResult(request.Id);

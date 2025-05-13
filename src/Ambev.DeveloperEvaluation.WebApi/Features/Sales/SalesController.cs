@@ -5,6 +5,10 @@ using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CancelSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.GetSaleById;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sales.UpdateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.CancelSale;
+using Ambev.DeveloperEvaluation.Application.Sale.CancelSaleItem;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +25,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
 
         public SalesController(IMediator mediator, ISaleRepository saleRepository, IMapper mapper)
         {
-            mapper = mapper;
+            _mapper = mapper;
             _mediator = mediator;
             _saleRepository = saleRepository;
         }
@@ -51,10 +55,10 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateSaleRequest command, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CreateSaleRequest request, CancellationToken cancellationToken)
         {
             var validator = new CreateSaleRequestValidator();
-            var validationResult = await validator.ValidateAsync(command, cancellationToken);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);
@@ -71,10 +75,10 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSaleCommand command, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSaleRequest request, CancellationToken cancellationToken)
         {
             var validator = new UpdateSaleRequestValidator();
-            var validationResult = await validator.ValidateAsync(command, cancellationToken);
+            var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);
@@ -82,7 +86,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             var command = _mapper.Map<UpdateSaleCommand>(request);
             var response = await _mediator.Send(command, cancellationToken);
 
-            return Ok(string.Empty, new ApiResponseWithData<UpdateSaleResponse>
+            return Ok(new ApiResponseWithData<UpdateSaleResponse>
             {
                 Success = true,
                 Message = "sale updated successfully",
@@ -90,19 +94,18 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
             });
         }
 
-
         [HttpPatch("{id}/cancel")]
         public async Task<IActionResult> Cancel(Guid id, CancellationToken cancellationToken)
         {
             var validator = new CancelSaleRequestValidator();
-            var request = new CancelSaleRequest(id)
+            var request = new CancelSaleRequest(id);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);
 
-            var response = await _mediator.Send(new CancelSaleCommand { Id = id });
-            return Ok(string.Empty, new ApiResponseWithData<CancelSaleResponse>
+            var response = await _mediator.Send(new CancelSaleCommand { Id = id }, cancellationToken);
+            return Ok(new ApiResponseWithData<CancelSaleResponse>
             {
                 Success = true,
                 Message = "Sale canceled successfully",
@@ -111,19 +114,20 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sales
         }
 
         [HttpPatch("{saleId}/items/{itemId}/cancel")]
-        public async Task<IActionResult> CancelItem(Guid saleId, Guid itemId)
+        public async Task<IActionResult> CancelItem(Guid saleId, Guid itemId, CancellationToken cancellationToken)
         {
             var validator = new CancelSaleItemRequestValidator();
-            var request = new CancelSaleItemCommand { SaleId = saleId, ItemId = itemId };
-
+            var request = new CancelSaleItemRequest { SaleId = saleId, ItemId = itemId };
 
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)
                 return BadRequest(validationResult.Errors);
 
-            var response = await _mediator.Send(new CancelSaleCommand { Id = id });
-            return Ok(string.Empty, new ApiResponseWithData<CancelSaleItemResponse>
+            var command = _mapper.Map<CancelSaleItemCommand>(request);
+            var response = await _mediator.Send(command, cancellationToken);
+            
+            return Ok(new ApiResponseWithData<CancelSaleItemResponse>
             {
                 Success = true,
                 Message = "Sale item canceled successfully",

@@ -1,6 +1,5 @@
 using System;
-using Ambev.DeveloperEvaluation.Application.Requests;
-using Ambev.DeveloperEvaluation.Application.Validators;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sales.CreateSale;
 using FluentValidation.TestHelper;
 using Xunit;
 
@@ -27,7 +26,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 CustomerName = "John Doe",
                 BranchId = Guid.NewGuid(),
                 BranchName = "Branch 1",
-                Items = new[]
+                Items = new System.Collections.Generic.List<CreateSaleItemRequest>
                 {
                     new CreateSaleItemRequest
                     {
@@ -58,7 +57,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 CustomerName = "John Doe",
                 BranchId = Guid.NewGuid(),
                 BranchName = "Branch 1",
-                Items = new[]
+                Items = new System.Collections.Generic.List<CreateSaleItemRequest>
                 {
                     new CreateSaleItemRequest
                     {
@@ -89,7 +88,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 CustomerName = string.Empty,
                 BranchId = Guid.NewGuid(),
                 BranchName = "Branch 1",
-                Items = new[]
+                Items = new System.Collections.Generic.List<CreateSaleItemRequest>
                 {
                     new CreateSaleItemRequest
                     {
@@ -120,7 +119,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 CustomerName = "John Doe",
                 BranchId = Guid.NewGuid(),
                 BranchName = string.Empty,
-                Items = new[]
+                Items = new System.Collections.Generic.List<CreateSaleItemRequest>
                 {
                     new CreateSaleItemRequest
                     {
@@ -151,7 +150,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 CustomerName = "John Doe",
                 BranchId = Guid.NewGuid(),
                 BranchName = "Branch 1",
-                Items = Array.Empty<CreateSaleItemRequest>()
+                Items = new System.Collections.Generic.List<CreateSaleItemRequest>()
             };
 
             // Act
@@ -173,7 +172,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 CustomerName = "John Doe",
                 BranchId = Guid.NewGuid(),
                 BranchName = "Branch 1",
-                Items = new[]
+                Items = new System.Collections.Generic.List<CreateSaleItemRequest>
                 {
                     new CreateSaleItemRequest
                     {
@@ -204,7 +203,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 CustomerName = "John Doe",
                 BranchId = Guid.NewGuid(),
                 BranchName = "Branch 1",
-                Items = new[]
+                Items = new System.Collections.Generic.List<CreateSaleItemRequest>
                 {
                     new CreateSaleItemRequest
                     {

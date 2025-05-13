@@ -20,6 +20,7 @@ namespace Ambev.DeveloperEvaluation.ORM.Mapping
             builder.Property(u => u.Discount).HasDefaultValue(0);
             builder.Property(u => u.IsCancelled).IsRequired().HasDefaultValue(false);
 
+            builder.Property<Guid>("SaleId").IsRequired();
         }
 
     }

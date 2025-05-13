@@ -19,6 +19,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             // Arrange
             var request = new UpdateSaleRequest
             {
+                Id = Guid.NewGuid(),
                 SaleNumber = "SALE-001",
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
@@ -29,12 +30,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 {
                     new UpdateSaleItemRequest
                     {
+                        Id = Guid.NewGuid(),
                         ProductId = Guid.NewGuid(),
                         ProductName = "Product 1",
                         Quantity = 5,
                         UnitPrice = 100m
                     }
-                }
+                }.ToList()
             };
 
             // Act
@@ -50,6 +52,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             // Arrange
             var request = new UpdateSaleRequest
             {
+                Id = Guid.NewGuid(),
                 SaleNumber = string.Empty,
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
@@ -60,12 +63,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 {
                     new UpdateSaleItemRequest
                     {
+                        Id = Guid.NewGuid(),
                         ProductId = Guid.NewGuid(),
                         ProductName = "Product 1",
                         Quantity = 5,
                         UnitPrice = 100m
                     }
-                }
+                }.ToList()
             };
 
             // Act
@@ -81,6 +85,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             // Arrange
             var request = new UpdateSaleRequest
             {
+                Id = Guid.NewGuid(),
                 SaleNumber = "SALE-001",
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
@@ -91,12 +96,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 {
                     new UpdateSaleItemRequest
                     {
+                        Id = Guid.NewGuid(),
                         ProductId = Guid.NewGuid(),
                         ProductName = "Product 1",
                         Quantity = 5,
                         UnitPrice = 100m
                     }
-                }
+                }.ToList()
             };
 
             // Act
@@ -112,6 +118,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             // Arrange
             var request = new UpdateSaleRequest
             {
+                Id = Guid.NewGuid(),
                 SaleNumber = "SALE-001",
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
@@ -122,12 +129,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 {
                     new UpdateSaleItemRequest
                     {
+                        Id = Guid.NewGuid(),
                         ProductId = Guid.NewGuid(),
                         ProductName = "Product 1",
                         Quantity = 5,
                         UnitPrice = 100m
                     }
-                }
+                }.ToList()
             };
 
             // Act
@@ -143,13 +151,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             // Arrange
             var request = new UpdateSaleRequest
             {
+                Id = Guid.NewGuid(),
                 SaleNumber = "SALE-001",
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
                 CustomerName = "John Doe",
                 BranchId = Guid.NewGuid(),
                 BranchName = "Branch 1",
-                Items = Array.Empty<UpdateSaleItemRequest>()
+                Items = Array.Empty<UpdateSaleItemRequest>().ToList()
             };
 
             // Act
@@ -165,6 +174,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             // Arrange
             var request = new UpdateSaleRequest
             {
+                Id = Guid.NewGuid(),
                 SaleNumber = "SALE-001",
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
@@ -175,12 +185,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 {
                     new UpdateSaleItemRequest
                     {
+                        Id = Guid.NewGuid(),
                         ProductId = Guid.NewGuid(),
                         ProductName = "Product 1",
                         Quantity = 0,
                         UnitPrice = 100m
                     }
-                }
+                }.ToList()
             };
 
             // Act
@@ -196,6 +207,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
             // Arrange
             var request = new UpdateSaleRequest
             {
+                Id = Guid.NewGuid(),
                 SaleNumber = "SALE-001",
                 SaleDate = DateTime.UtcNow,
                 CustomerId = Guid.NewGuid(),
@@ -206,12 +218,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Validators
                 {
                     new UpdateSaleItemRequest
                     {
+                        Id = Guid.NewGuid(),
                         ProductId = Guid.NewGuid(),
                         ProductName = "Product 1",
                         Quantity = 5,
                         UnitPrice = 0m
                     }
-                }
+                }.ToList()
             };
 
             // Act

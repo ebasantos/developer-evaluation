@@ -1,6 +1,8 @@
+using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
+using AutoMapper;
 using Moq;
 using Xunit;
 
@@ -9,12 +11,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
     public class UpdateSaleCommandHandlerTests
     {
         private readonly Mock<ISaleRepository> _saleRepositoryMock;
+        private readonly Mock<IMapper> _mapperMock;
         private readonly UpdateSaleCommandHandler _handler;
 
         public UpdateSaleCommandHandlerTests()
         {
             _saleRepositoryMock = new Mock<ISaleRepository>();
-            _handler = new UpdateSaleCommandHandler(_saleRepositoryMock.Object);
+            _mapperMock = new Mock<IMapper>();
+            _handler = new UpdateSaleCommandHandler(_saleRepositoryMock.Object, _mapperMock.Object);
         }
 
         [Fact]
@@ -59,7 +63,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
 
             _saleRepositoryMock
                 .Setup(x => x.UpdateAsync(It.IsAny<Sale>()))
-                .Returns(Task.CompletedTask);
+                .Returns(Task.FromResult<Sale>(null));
 
             // Act
             await _handler.Handle(command, CancellationToken.None);
@@ -80,7 +84,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
                 .ReturnsAsync((Sale)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            Assert.Equal("Sale not found.", ex.Message);
         }
 
         [Fact]
@@ -105,7 +110,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application.Handlers
                 .ReturnsAsync(existingSale);
 
             // Act & Assert
-            await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            var ex = await Assert.ThrowsAsync<Exception>(() => _handler.Handle(command, CancellationToken.None));
+            Assert.Equal("canceled sales cannot be updated...", ex.Message);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem
             _saleRepository = saleRepository;
         }
 
-        public async Task Handle(CancelSaleItemCommand request, CancellationToken cancellationToken)
+        public async Task<CancelSaleItemResult> Handle(CancelSaleItemCommand request, CancellationToken cancellationToken)
         {
             var sale = await _saleRepository.GetByIdAsync(request.SaleId) ?? throw new Exception("sale not found");
 
@@ -26,7 +26,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sales.CancelSaleItem
             sale.CancelItem(request.ItemId);
             await _saleRepository.UpdateAsync(sale);
 
-            return _mapper<CancelSaleItemResult>(request);
+            return _mapper.Map<CancelSaleItemResult>(request);
         }
     }
 }

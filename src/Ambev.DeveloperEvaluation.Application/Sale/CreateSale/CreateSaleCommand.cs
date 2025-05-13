@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSale
 {
-    public class CreateSaleCommand : IRequest<Guid>
+    public class CreateSaleCommand : IRequest<CreateSaleResult>
     {
         public string SaleNumber { get; set; }
         public DateTime SaleDate { get; set; }

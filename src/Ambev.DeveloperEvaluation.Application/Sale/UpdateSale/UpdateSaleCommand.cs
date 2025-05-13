@@ -2,7 +2,7 @@ using MediatR;
 
 namespace Ambev.DeveloperEvaluation.Application.Sale.UpdateSale
 {
-    public class UpdateSaleCommand : IRequest
+    public class UpdateSaleCommand : IRequest<UpdateSaleResult>
     {
         public Guid Id { get; set; }
         public string SaleNumber { get; set; }

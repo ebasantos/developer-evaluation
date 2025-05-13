@@ -12,12 +12,11 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities
         public decimal Discount { get; private set; }
         public bool IsCancelled { get; private set; }
         public decimal TotalAmount => Quantity * UnitPrice * (1 - Discount);
+        public virtual Sale Sale { get; private set; }
 
         protected SaleItem() { }
 
-
         private void CancelItem() => IsCancelled = true;
-
 
         public SaleItem(Guid productId, string productName, int quantity, decimal unitPrice, decimal discount)
         {
