@@ -1,70 +1,118 @@
-# 🚀 Avaliação Técnica - Sistema de Vendas
+# Ambev Developer Evaluation
 
+Este projeto é uma avaliação de desenvolvedor para a Ambev, implementando um sistema de vendas com regras de negócio específicas.
 
-## 📋 Descrição do Projeto
+## Requisitos
 
-Este projeto consiste em uma API completa para controle de vendas, incluindo:
-- Cadastro, atualização, consulta e cancelamento de vendas
-- Controle de clientes,  itens vendidos
-- Aplicação de descontos automáticos conforme a quantidade de itens
-- Publicação de eventos de domínio (ex: venda criada, modificada, cancelada)
-- Integração com PostgreSQL e RabbitMQ
+- .NET 8.0 SDK
+- Docker e Docker Compose
+- PostgreSQL 13
+- RabbitMQ 3-management
 
-## 🛠️ Tecnologias Utilizadas
+## Configuração do Ambiente
 
-- .NET 8
-- Entity Framework Core
-- PostgreSQL
-- RabbitMQ (MassTransit)
-- Docker & Docker Compose
-- xUnit, Moq (testes)
+1. Clone o repositório
+2. Navegue até a pasta do projeto:
+   ```bash
+   cd template/backend
+   ```
 
-## ⚙️ Como Executar o Projeto
+3. Configure as variáveis de ambiente:
+   - O banco de dados PostgreSQL será configurado automaticamente com:
+     - Usuário: postgres
+     - Senha: ev@luAt10n
+     - Banco: developer_evaluation
 
-### Pré-requisitos
-- Docker e Docker Compose instalados
-- .NET 8 SDK instalado (opcional, para rodar comandos locais)
+4. Execute o projeto usando Docker Compose:
+   ```bash
+   docker-compose up -d
+   ```
 
-### Passos para rodar tudo com Docker
+## Estrutura do Projeto
 
+O projeto está organizado nas seguintes camadas:
+
+- **Domain**: Contém as entidades e regras de negócio
+  - `Sale`: Entidade principal de venda
+  - `SaleItem`: Itens de venda com regras de desconto
+  - `User`: Entidade de usuário
+
+- **Application**: Contém a lógica de aplicação
+  - Commands e Handlers para operações de venda
+  - Validadores de requisições
+  - Mapeamentos DTO
+
+- **ORM**: Configuração do Entity Framework Core
+  - Mapeamentos das entidades
+  - Configuração do banco de dados
+  - Repositórios
+
+- **WebApi**: API REST
+  - Controllers
+  - Middlewares
+  - Configuração de autenticação
+
+## Regras de Negócio
+
+### Vendas
+
+1. **Limite de Quantidade**:
+   - Não é permitido vender mais de 20 itens iguais
+
+2. **Descontos por Quantidade**:
+   - 20% de desconto para quantidades entre 10 e 20
+   - 10% de desconto para quantidades entre 5 e 9
+   - Sem desconto para quantidades abaixo de 5
+
+3. **Cancelamento**:
+   - Vendas podem ser canceladas
+   - Itens individuais podem ser cancelados
+   - Eventos de domínio são disparados para cancelamentos
+
+## Endpoints da API
+
+### Vendas
+
+- `POST /api/sales`: Criar nova venda
+- `PUT /api/sales/{id}`: Atualizar venda
+- `DELETE /api/sales/{id}`: Cancelar venda
+- `DELETE /api/sales/{id}/items/{itemId}`: Cancelar item de venda
+
+### Autenticação
+
+- `POST /api/auth/login`: Login de usuário
+- `POST /api/auth/register`: Registro de novo usuário
+
+## Testes
+
+O projeto inclui testes unitários para:
+
+- Entidades de domínio
+- Handlers de comando
+- Validadores de requisição
+
+Para executar os testes:
 ```bash
-git clone <url-do-seu-repositorio>
-cd abi-gth-omnia-developer-evaluation/template/backend
-cp ../.env.example .env # se existir arquivo de exemplo
-# Suba os containers
-sudo docker-compose up --build
-```
-
-A API estará disponível em: [http://localhost:5000](http://localhost:5000)
-
-### Aplicar Migrações Manualmente (opcional)
-Se quiser rodar as migrações manualmente:
-```bash
-cd src/Ambev.DeveloperEvaluation.ORM
-dotnet ef database update --connection "Host=localhost;Database=developer_evaluation;Username=developer;Password=ev@luAt10n"
-```
-
-## 🧪 Rodando os Testes
-
-```bash
-cd tests/Ambev.DeveloperEvaluation.Unit
 dotnet test
 ```
 
-## 📦 Estrutura do Projeto
+## Migrações
 
-- `src/` - Código-fonte da aplicação
-- `tests/` - Testes automatizados
-- `docker-compose.yml` - Orquestração dos serviços
+Para criar uma nova migração:
+```bash
+cd src/Ambev.DeveloperEvaluation.ORM
+dotnet ef migrations add NomeDaMigracao
+```
 
-## 📚 Documentação
+Para aplicar as migrações:
+```bash
+dotnet ef database update
+```
 
-- [Visão Geral](.doc/overview.md)
-- [Stack Tecnológico](.doc/tech-stack.md)
-- [Regras de Negócio](README.md#descrição-do-projeto)
+## Observações
 
-## 👤 Autor
-
-- Desenvolvido por Erik Santos
+- O projeto usa PostgreSQL como banco de dados principal
+- RabbitMQ é usado para mensageria
+- A autenticação é feita via JWT
 
 ---

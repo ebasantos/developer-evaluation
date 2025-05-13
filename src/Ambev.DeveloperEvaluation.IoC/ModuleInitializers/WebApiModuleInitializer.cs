@@ -22,7 +22,15 @@ namespace Ambev.DeveloperEvaluation.IoC.ModuleInitializers
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host("localhost", "/", h => { });
+                    var host = builder.Configuration["RabbitMQ:Host"] ?? "localhost";
+                    var username = builder.Configuration["RabbitMQ:Username"] ?? "guest";
+                    var password = builder.Configuration["RabbitMQ:Password"] ?? "guest";
+
+                    cfg.Host(host, "/", h => 
+                    {
+                        h.Username(username);
+                        h.Password(password);
+                    });
 
                     cfg.ConfigureEndpoints(context);
                 });

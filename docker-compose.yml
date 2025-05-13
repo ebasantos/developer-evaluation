@@ -12,53 +12,51 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=ambev.developerevaluation.database;Database=developer_evaluation;Username=developer;Password=ev@luAt10n
+      - ConnectionStrings__DefaultConnection=Host=ambev.developerevaluation.database;Database=developer_evaluation;Username=postgres;Password=ev@luAt10n
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
     ports:
-      - "8080"
-      - "8081"
-      - "5000:80"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - ambev.developerevaluation.database
       - rabbitmq
+    networks:
+      - ambev-network
+    restart: unless-stopped
 
   ambev.developerevaluation.database:
     container_name: ambev_developer_evaluation_database
     image: postgres:13
     environment:
-      POSTGRES_DB: developer_evaluation
-      POSTGRES_USER: developer
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ev@luAt10n
+      POSTGRES_DB: developer_evaluation
     ports:
-      - "5432"
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ambev-network
     restart: unless-stopped
 
-  ambev.developerevaluation.nosql:
-    container_name: ambev_developer_evaluation_nosql 
-    image: mongo:8.0    
-    environment:
-        MONGO_INITDB_ROOT_USERNAME: developer
-        MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
-    ports:
-      - "27017"
-
-  ambev.developerevaluation.cache:
-    container_name: ambev_developer_evaluation_cache 
-    image: redis:7.4.1-alpine     
-    command: redis-server --requirepass ev@luAt10n
-    environment:
-       MONGO_INITDB_ROOT_USERNAME: developer
-       MONGO_INITDB_ROOT_PASSWORD: ev@luAt10n
-    ports:
-       - "6379"
-
   rabbitmq:
+    container_name: ambev_developer_evaluation_rabbitmq
     image: rabbitmq:3-management
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5673:5672"
+      - "15673:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - ambev-network
+    restart: unless-stopped
+
+networks:
+  ambev-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
